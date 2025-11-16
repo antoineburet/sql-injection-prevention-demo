@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vulnerable Site</title>
+    <style>
+        body { font-family: sans-serif; display: flex; justify-content: center; gap: 2rem; }
+        form { text-align: center; border: 1px solid #ccc; padding: 1.5rem; border-radius: 8px; }
+        input { display: block; margin: 0.5rem 0; }
+        #register-message, #login-message { margin-top: 1rem; font-weight: bold; }
+        .success { color: green; }
+        .error { color: red; }
+    </style>
+</head>
+<body>
+    <form id="register-form">
+        <h1>Create Account (Secure)</h1>
+        <input id="register-user" type="text" name="user" placeholder="Username" required>
+        <input id="register-pass" type="password" name="password" placeholder="Password" required>
+        <button type="submit">Submit</button>
+        <p id="register-message"></p>
+    </form>
+
+    <form id="login-form">
+        <h1>Login (Vulnerable)</h1>
+        <input id="login-user" type="text" name="user" placeholder="Username" required>
+        <input id="login-pass" type="password" name="password" placeholder="Password">
+        <button type="submit">Submit</button>
+        <p id="login-message"></p>
+    </form>
+
+    <form id="secure-login-form">
+        <h1>Login (Secure)</h1>
+        <input id="secure-login-user" type="text" name="user" placeholder="Username" required>
+        <input id="secure-login-pass" type="password" name="password" placeholder="Password">
+        <button type="submit">Submit</button>
+        <p id="secure-login-message"></p>
+    </form>
+
+    <script>
+        // --- Helper function to send data ---
+        async function postData(url = '', data = {}) {
+            const response = await fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(data)
+            });
+            return response.json(); // parses JSON response into native JavaScript objects
+        }
+
+        // --- Register Form ---
+        const registerForm = document.getElementById('register-form');
+        const registerUser = document.getElementById('register-user');
+        const registerPass = document.getElementById('register-pass');
+        const registerMsg = document.getElementById('register-message');
+
+        registerForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Stop the form from reloading the page
+            const data = {
+                user: registerUser.value,
+                password: registerPass.value
+            };
+            
+            postData('/register', data)
+                .then(response => {
+                    console.log(response);
+                    registerMsg.textContent = response.message;
+                    if (response.message.includes('success')) {
+                        registerMsg.className = 'success';
+                    } else {
+                        registerMsg.className = 'error';
+                    }
+                });
+        });
+
+        // --- Login Form ---
+        const loginForm = document.getElementById('login-form');
+        const loginUser = document.getElementById('login-user');
+        const loginPass = document.getElementById('login-pass');
+        const loginMsg = document.getElementById('login-message');
+
+        loginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Stop the form from reloading the page
+            const data = {
+                user: loginUser.value,
+                password: loginPass.value
+            };
+
+            postData('/login', data)
+                .then(response => {
+                    console.log(response);
+                    loginMsg.textContent = response.message;
+                    if (response.message.includes('success')) {
+                        loginMsg.className = 'success';
+                    } else {
+                        loginMsg.className = 'error';
+                    }
+                });
+        });
+
+        // --- Login Secure Form ---
+        const secureLoginForm = document.getElementById('secure-login-form');
+        const secureLoginUser = document.getElementById('secure-login-user');
+        const secureLoginPass = document.getElementById('secure-login-pass');
+        const secureLoginMsg = document.getElementById('secure-login-message');
+        secureLoginForm.addEventListener('submit', (e) => {
+            e.preventDefault(); // Stop the form from reloading the page
+            const data = {
+                user: secureLoginUser.value,
+                password: secureLoginPass.value
+            };
+
+            postData('/login-secure', data)
+                .then(response => {
+                    console.log(response);
+                    secureLoginMsg.textContent = response.message;
+                    if (response.message.includes('success')) {
+                        secureLoginMsg.className = 'success';
+                    } else {
+                        secureLoginMsg.className = 'error';
+                    }
+                });
+        });
+    </script>
+</body>
+</html>
