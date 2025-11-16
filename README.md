@@ -1,3 +1,5 @@
+<img width="1586" height="340" alt="sqli-demo-screenshot" src="https://github.com/user-attachments/assets/b5383400-e0b9-4fac-ac66-b77ad9601b95" />
+
 # SQL Injection Prevention Demo
 
 This project is a simple Node.js, Express, and MySQL application built to demonstrate **two major security flaws** and, more importantly, how to fix them.
